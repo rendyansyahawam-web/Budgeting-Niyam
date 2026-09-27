@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#083f3b">
+<title>BudgetKu</title>
+<style>
+:root{
+ --bg:#f4f7f6;--card:#fff;--ink:#15221f;--muted:#74807d;--line:#e4ebe8;
+ --green:#087c6d;--green2:#0b554e;--green3:#dff3ee;--blue:#3e83e8;
+ --orange:#f4a34b;--purple:#9064df;--pink:#ed668c;--red:#d94c54;
+ --shadow:0 10px 30px rgba(24,48,43,.07)
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh}
+.top{
+ background:linear-gradient(135deg,#0b242e 0%,#073f3b 60%,#08685c 100%);
+ color:white;padding:28px max(20px,calc((100vw - 1200px)/2)) 24px;
+}
+.top-inner{max-width:1200px;margin:auto}
+.brand-row{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;border-radius:13px;background:#fff1;display:grid;place-items:center;font-size:21px}
+.brand b{font-size:21px;letter-spacing:-.4px}.brand small{display:block;opacity:.72;margin-top:2px}
+.top-actions{display:flex;gap:8px}.top-btn{border:0;background:#ffffff16;color:#fff;border-radius:10px;padding:9px 11px}
+.top-btn:hover{background:#ffffff25}
+main{max-width:1200px;margin:auto;padding:22px 20px 100px}
+.page{display:none}.page.active{display:block}
+.month-bar{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow);margin-top:-42px;position:relative}
+.month-left{display:flex;align-items:center;gap:10px;font-weight:800}
+.month-icon{font-size:19px}
+.month-select{border:0;outline:0;background:transparent;font-weight:800;color:var(--ink);padding:3px}
+.month-actions{display:flex;gap:7px}.small-btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 11px;font-weight:700;color:var(--ink)}
+.small-btn:hover{background:#f4f7f6}
+.grid{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;margin-top:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:19px}
+.salary-card{background:linear-gradient(135deg,#07524d,#0b776b);color:#fff;border:0}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+.card-title{margin:0;font-size:17px}.muted{color:var(--muted)}.salary-card .muted{color:#d4e7e4}
+.salary-top{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}
+.salary-label{font-size:13px;font-weight:700;opacity:.9}
+.salary{font-size:31px;font-weight:850;letter-spacing:-1px;margin:7px 0 12px}
+.edit-pill{background:#ffffff19;border:1px solid #ffffff27;color:#fff;border-radius:10px;padding:9px 12px}
+.bar{height:9px;background:#ffffff2a;border-radius:99px;overflow:hidden}.bar>i{display:block;height:100%;background:#42d6ad;border-radius:99px;width:0}
+.salary-stats{display:grid;grid-template-columns:1fr 1fr;margin-top:16px}.salary-stat{padding-right:14px}.salary-stat+ .salary-stat{border-left:1px solid #ffffff2c;padding-left:18px}.salary-stat span{display:block;font-size:11px;opacity:.75}.salary-stat b{display:block;font-size:18px;margin-top:4px}
+.section-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.card.full{grid-column:1/-1}
+.add-btn{border:0;background:var(--green3);color:var(--green2);font-weight:800;border-radius:10px;padding:9px 12px}
+.add-btn:hover{filter:brightness(.97)}
+.list{display:grid;gap:9px}.row{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);
+ border-radius:13px;padding:12px;background:#fff
+}
+.row-main{display:flex;align-items:center;gap:11px;min-width:0}.ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:19px;flex:none}
+.ico.green{background:#dff5ec;color:#087c6d}.ico.blue{background:#e5f0ff;color:#3279d5}.ico.orange{background:#fff0dd;color:#d88528}.ico.purple{background:#eee6ff;color:#8057cc}.ico.pink{background:#ffe5ed;color:#d94f79}
+.row-name{font-weight:800;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.row-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.row-right{text-align:right;white-space:nowrap}.money{font-variant-numeric:tabular-nums}.row-right b{font-size:13px}.row-actions{display:flex;gap:5px;margin-top:5px;justify-content:flex-end}
+.iconbtn{border:1px solid var(--line);background:#fff;border-radius:7px;padding:5px 7px;font-size:11px}.iconbtn.delete{color:var(--red)}
+.total{margin-top:11px;background:#f7faf9;border-radius:11px;padding:12px;display:flex;justify-content:space-between;font-size:13px}
+.empty{padding:22px 10px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:13px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.summary-box{padding:13px;border:1px solid var(--line);border-radius:12px}.summary-box span{display:block;color:var(--muted);font-size:11px}.summary-box b{display:block;font-size:17px;margin-top:5px}
+.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:2px}.tab{border:0;background:#edf2f1;color:#60706c;border-radius:20px;padding:9px 14px;font-weight:750;white-space:nowrap}.tab.active{background:#0b776b;color:#fff}
+.detail-list{margin-top:15px}
+.detail-card{border:1px solid var(--line);border-radius:15px;padding:15px;background:#fff;margin-bottom:10px}
+.detail-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.detail-title{font-weight:850}.detail-amount{font-weight:850}
+.detail-meta{display:flex;gap:20px;margin-top:5px;font-size:11px;color:var(--muted)}.detail-actions{margin-top:9px;display:flex;gap:6px}
+.ring-wrap{display:flex;align-items:center;gap:20px}.ring{width:105px;height:105px;border-radius:50%;background:conic-gradient(var(--green) var(--pct),#e7eeec 0);display:grid;place-items:center;flex:none}.ring:after{content:"";width:77px;height:77px;background:#fff;border-radius:50%;position:absolute}.ring span{position:relative;z-index:1;font-size:19px;font-weight:850}
+.chart{height:180px;display:flex;align-items:end;gap:10px;padding:12px 5px 0}.barcol{flex:1;text-align:center;font-size:10px;color:var(--muted)}.barcol i{display:block;background:#4fc3a2;border-radius:7px 7px 2px 2px;min-height:4px;margin-bottom:7px}
+.setting{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);gap:12px}.setting:last-child{border:0}.setting b{font-size:14px}.setting span{font-size:12px;color:var(--muted);display:block;margin-top:3px}
+.switch{width:48px;height:27px;border-radius:99px;background:#d8dfdc;border:0;padding:3px}.switch i{display:block;width:21px;height:21px;border-radius:50%;background:#fff;transition:.2s}.switch.on{background:var(--green)}.switch.on i{transform:translateX(21px)}
+.bottom{
+ position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+ display:flex;justify-content:center;z-index:30;padding:7px max(10px,calc((100vw - 700px)/2)) calc(7px + env(safe-area-inset-bottom))
+}
+.nav{width:100%;max-width:700px;display:grid;grid-template-columns:repeat(4,1fr)}.nav button{border:0;background:none;color:#77827f;padding:6px 3px;font-size:11px}.nav button b{display:block;font-size:19px;margin-bottom:2px}.nav button.active{color:#087c6d;font-weight:800}
+.modal-bg{display:none;position:fixed;inset:0;background:#0c171544;z-index:100;align-items:center;justify-content:center;padding:18px}.modal-bg.show{display:flex}
+.modal{width:min(510px,100%);background:#fff;border-radius:18px;padding:20px;box-shadow:0 30px 80px #0003}.modal h3{margin:0 0 16px}.form{display:grid;gap:12px}.field label{font-size:12px;font-weight:800;display:block;margin-bottom:6px}.input{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;outline:0;background:#fff}.input:focus{border-color:#0b776b;box-shadow:0 0 0 3px #0b776b15}.form2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;font-weight:750}.btn.primary{background:#087c6d;color:#fff;border-color:#087c6d}.btn.danger{color:var(--red)}
+.toast{position:fixed;right:18px;bottom:78px;background:#15221f;color:#fff;padding:10px 14px;border-radius:10px;z-index:120;font-size:12px;opacity:0;transform:translateY(8px);transition:.2s}.toast.show{opacity:1;transform:translateY(0)}
+.note{font-size:11px;color:var(--muted);margin-top:9px}
+@media(max-width:800px){.grid,.section-grid{grid-template-columns:1fr}.card.full{grid-column:auto}.summary-grid{grid-template-columns:1fr 1fr}.top{padding-left:16px;padding-right:16px}main{padding-left:13px;padding-right:13px}.month-bar{margin-top:-35px}.top-actions .top-btn{font-size:11px;padding:8px}.salary{font-size:28px}}
+@media(max-width:520px){.month-bar{align-items:flex-start;flex-direction:column}.month-actions{width:100%}.month-actions .small-btn{flex:1}.summary-grid{grid-template-columns:1fr 1fr}.ring-wrap{align-items:flex-start}.salary-top{gap:8px}.edit-pill{font-size:11px;padding:8px}.form2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="top-inner">
+  <div class="brand-row">
+   <div class="brand"><div class="logo">▣</div><div><b>BudgetKu</b><small>Kelola hari ini, untuk nanti.</small></div></div>
+   <div class="top-actions">
+    <button class="top-btn" id="newMonth">＋ Bulan</button>
+    <button class="top-btn" id="resetAll">↻ Reset</button>
+   </div>
+  </div>
+ </div>
+</header>
+
+<main>
+ <div class="month-bar">
+  <div class="month-left"><span class="month-icon">▣</span><select id="monthSelect" class="month-select"></select></div>
+  <div class="month-actions"><button class="small-btn" id="editSalary">Edit Gaji</button><button class="small-btn" id="addIncome">＋ Pemasukan</button></div>
+ </div>
+
+ <section id="homePage" class="page active">
+  <div class="grid">
+   <article class="card salary-card">
+    <div class="salary-top">
+     <div><div class="salary-label">▣ &nbsp;Gaji Utama</div><div class="salary" id="salary">Rp 0</div></div>
+     <button class="edit-pill" id="editSalary2">Edit Gaji</button>
+    </div>
+    <div class="bar"><i id="salaryBar"></i></div>
+    <div class="salary-stats">
+     <div class="salary-stat"><span>Sudah Dialokasikan</span><b id="allocated">Rp 0</b></div>
+     <div class="salary-stat"><span>Sisa Aktual</span><b id="remaining">Rp 0</b></div>
+    </div>
+   </article>
+  </div>
+
+  <div class="section-grid">
+   <article class="card">
+    <div class="card-head"><h2 class="card-title">▤ &nbsp;Pembagian Tabungan</h2><button class="add-btn" id="addSaving">＋ Tambah</button></div>
+    <div class="list" id="savingList"></div>
+    <div class="total"><span>Total Tabungan</span><b id="savingTotal">Rp 0</b></div>
+   </article>
+
+   <article class="card">
+    <div class="card-head"><h2 class="card-title">▣ &nbsp;Cicilan</h2><button class="add-btn" id="addInstallment">＋ Tambah</button></div>
+    <div class="list" id="installmentList"></div>
+    <div class="total"><span>Total Cicilan</span><b id="installmentTotal">Rp 0</b></div>
+   </article>
+
+   <article class="card full">
+    <div class="card-head"><h2 class="card-title">Ringkasan Aktual</h2><span class="muted" id="percentText">0% teralokasi</span></div>
+    <div class="summary-grid">
+     <div class="summary-box"><span>Gaji</span><b id="sSalary">Rp 0</b></div>
+     <div class="summary-box"><span>Tabungan</span><b id="sSaving">Rp 0</b></div>
+     <div class="summary-box"><span>Cicilan Dibayar</span><b id="sPaid">Rp 0</b></div>
+     <div class="summary-box"><span>Sisa Aktual</span><b id="sRemain">Rp 0</b></div>
+    </div>
+   </article>
+  </div>
+ </section>
+
+ <section id="transactionsPage" class="page">
+  <div class="card">
+   <div class="card-head"><div><h2 class="card-title">Transaksi</h2><div class="note">Catat pengeluaran aktual bulan ini.</div></div><button class="add-btn" id="addExpense">＋ Tambah</button></div>
+   <div class="list" id="transactionList"></div>
+   <div class="total"><span>Total Pengeluaran</span><b id="expenseTotal">Rp 0</b></div>
+  </div>
+ </section>
+
+ <section id="analysisPage" class="page">
+  <div class="section-grid">
+   <article class="card full">
+    <div class="card-head"><h2 class="card-title">Realisasi Budget</h2><span class="muted">Bulan aktif</span></div>
+    <div class="ring-wrap">
+     <div class="ring" id="ring"><span id="ringText">0%</span></div>
+     <div><div class="muted">Terpakai</div><h2 id="aUsed">Rp 0</h2><div class="muted">Sisa <b id="aRemain">Rp 0</b></div></div>
+    </div>
+    <div class="bar" style="background:#e8efed;margin-top:18px"><i id="analysisBar" style="background:#40c7a0"></i></div>
+   </article>
+   <article class="card">
+    <div class="card-head"><h2 class="card-title">Rincian</h2></div>
+    <div class="list">
+     <div class="row"><div class="row-main"><div class="ico green">▣</div><div><div class="row-name">Gaji</div></div></div><b id="aSalary">Rp 0</b></div>
+     <div class="row"><div class="row-main"><div class="ico orange">⌂</div><div><div class="row-name">Tabungan</div></div></div><b id="aSaving">Rp 0</b></div>
+     <div class="row"><div class="row-main"><div class="ico purple">▣</div><div><div class="row-name">Cicilan</div></div></div><b id="aInstallment">Rp 0</b></div>
+     <div class="row"><div class="row-main"><div class="ico blue">↘</div><div><div class="row-name">Pengeluaran</div></div></div><b id="aExpense">Rp 0</b></div>
+    </div>
+   </article>
+   <article class="card">
+    <div class="card-head"><h2 class="card-title">Grafik Pengeluaran</h2></div>
+    <div class="chart" id="chart"></div>
+   </article>
+  </div>
+ </section>
+
+ <section id="settingsPage" class="page">
+  <div class="card">
+   <div class="card-head"><h2 class="card-title">Pengaturan</h2></div>
+   <div class="setting"><div><b>Autosave</b><span>Perubahan otomatis disimpan di browser.</span></div><button class="switch on" id="autosaveSwitch"><i></i></button></div>
+   <div class="setting"><div><b>Reset bulan aktif</b><span>Hapus gaji, tabungan, cicilan dan transaksi bulan ini.</span></div><button class="btn danger" id="resetSettings">Reset</button></div>
+   <div class="setting"><div><b>Buat bulan berikutnya</b><span>Mulai bulan baru tanpa menghapus bulan sebelumnya.</span></div><button class="btn primary" id="newMonth2">＋ Buat</button></div>
+  </div>
+ </section>
+</main>
+
+<nav class="bottom"><div class="nav">
+ <button class="active" data-page="homePage"><b>⌂</b>Beranda</button>
+ <button data-page="transactionsPage"><b>≡</b>Transaksi</button>
+ <button data-page="analysisPage"><b>▥</b>Analisis</button>
+ <button data-page="settingsPage"><b>⚙</b>Pengaturan</button>
+</div></nav>
+</div>
+
+<div class="modal-bg" id="modalBg">
+ <div class="modal">
+  <h3 id="modalTitle">Form</h3>
+  <div class="form" id="modalForm"></div>
+  <div class="modal-foot"><button class="btn" id="cancelModal">Batal</button><button class="btn primary" id="saveModal">Simpan</button></div>
+ </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const KEY="budgetku_pro_v3";
+const MONTHS=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+let db=readDB(), currentKey=nowKey(), modal=null, autosave=true;
+
+function nowKey(){let d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")}
+function blank(){return{salary:0,savings:[],installments:[],transactions:[]}}
+function ensure(k){if(!db[k])db[k]=blank();db[k].savings ||= [];db[k].installments ||= [];db[k].transactions ||= [];return db[k]}
+function readDB(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return{}}}
+function persist(){if(!autosave)return;localStorage.setItem(KEY,JSON.stringify(db))}
+function label(k){let [y,m]=k.split("-").map(Number);return MONTHS[m-1]+" "+y}
+function rup(n){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Math.round(Number(n)||0))}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function id(){return crypto.randomUUID ? crypto.randomUUID() : Date.now()+"-"+Math.random()}
+function d(){return ensure(currentKey)}
+function calc(){
+ let x=d(),sv=x.savings.reduce((a,v)=>a+Number(v.amount||0),0),paid=x.installments.reduce((a,v)=>a+Number(v.paid||0),0);
+ let total=x.installments.reduce((a,v)=>a+Number(v.total||0),0),exp=x.transactions.reduce((a,v)=>a+Number(v.amount||0),0);
+ let used=sv+paid+exp,remain=Number(x.salary||0)-used;
+ return {sv,paid,total,exp,used,remain,pct:x.salary?Math.min(100,Math.max(0,used/x.salary*100)):0}
+}
+function monthOptions(){
+ let keys=Object.keys(db).sort((a,b)=>b.localeCompare(a));if(!keys.includes(currentKey))keys.unshift(currentKey);
+ let s=document.getElementById("monthSelect");s.innerHTML=keys.map(k=>`<option value="${k}">${label(k)}</option>`).join("");s.value=currentKey
+}
+function render(){
+ let x=d(),c=calc();document.getElementById("salary").textContent=rup(x.salary);document.getElementById("allocated").textContent=rup(c.used);document.getElementById("remaining").textContent=rup(c.remain);
+ document.getElementById("salaryBar").style.width=c.pct+"%";document.getElementById("percentText").textContent=Math.round(c.pct)+"% teralokasi";
+ document.getElementById("sSalary").textContent=rup(x.salary);document.getElementById("sSaving").textContent=rup(c.sv);document.getElementById("sPaid").textContent=rup(c.paid);document.getElementById("sRemain").textContent=rup(c.remain);
+ document.getElementById("savingTotal").textContent=rup(c.sv);document.getElementById("installmentTotal").textContent=rup(c.total);
+ renderSavings();renderInstallments();renderTransactions();renderAnalysis();monthOptions()
+}
+function renderSavings(){
+ let a=d().savings,el=document.getElementById("savingList");if(!a.length){el.innerHTML='<div class="empty">Belum ada pos tabungan.<br>Tambahkan pos custom sesuai kebutuhanmu.</div>';return}
+ let salary=d().salary||1;el.innerHTML=a.map((v,i)=>`<div class="row"><div class="row-main"><div class="ico ${v.color||"green"}">${v.icon||"▣"}</div><div><div class="row-name">${esc(v.name)}</div><div class="row-sub">${Math.round(v.amount/salary*100)}% dari gaji</div></div></div><div class="row-right"><b>${rup(v.amount)}</b><div class="row-actions"><button class="iconbtn" onclick="editSaving(${i})">Edit</button><button class="iconbtn delete" onclick="delSaving(${i})">Hapus</button></div></div></div>`).join("")
+}
+function renderInstallments(){
+ let a=d().installments,el=document.getElementById("installmentList");if(!a.length){el.innerHTML='<div class="empty">Belum ada cicilan.<br>Tambahkan cicilan dan pantau sisa pembayarannya.</div>';return}
+ el.innerHTML=a.map((v,i)=>{let rem=Math.max(0,Number(v.total)-Number(v.paid)),p=v.total?Math.min(100,v.paid/v.total*100):0;return `<div class="row"><div class="row-main"><div class="ico purple">▣</div><div><div class="row-name">${esc(v.name)}</div><div class="row-sub">Total ${rup(v.total)} · Sisa ${rup(rem)}</div></div></div><div class="row-right"><b>${rup(v.paid)} dibayar</b><div class="row-actions"><button class="iconbtn" onclick="editInstallment(${i})">Edit</button><button class="iconbtn delete" onclick="delInstallment(${i})">Hapus</button></div></div></div>`}).join("")
+}
+function renderTransactions(){
+ let a=d().transactions,el=document.getElementById("transactionList"),total=a.reduce((s,v)=>s+Number(v.amount||0),0);document.getElementById("expenseTotal").textContent=rup(total);
+ if(!a.length){el.innerHTML='<div class="empty">Belum ada transaksi pengeluaran bulan ini.</div>';return}
+ el.innerHTML=a.map((v,i)=>`<div class="row"><div class="row-main"><div class="ico blue">↘</div><div><div class="row-name">${esc(v.name)}</div><div class="row-sub">${esc(v.date||"Bulan ini")}</div></div></div><div class="row-right"><b>${rup(v.amount)}</b><div class="row-actions"><button class="iconbtn" onclick="editExpense(${i})">Edit</button><button class="iconbtn delete" onclick="delExpense(${i})">Hapus</button></div></div></div>`).join("")
+}
+function renderAnalysis(){
+ let c=calc(),x=d();document.getElementById("ring").style.setProperty("--pct",c.pct+"%");document.getElementById("ringText").textContent=Math.round(c.pct)+"%";document.getElementById("aUsed").textContent=rup(c.used);document.getElementById("aRemain").textContent=rup(c.remain);document.getElementById("analysisBar").style.width=c.pct+"%";
+ document.getElementById("aSalary").textContent=rup(x.salary);document.getElementById("aSaving").textContent=rup(c.sv);document.getElementById("aInstallment").textContent=rup(c.paid);document.getElementById("aExpense").textContent=rup(c.exp);
+ let chart=document.getElementById("chart"), months=Object.keys(db).sort().slice(-6);if(!months.length)months=[currentKey];let vals=months.map(k=>{let old=currentKey;currentKey=k;let n=calc().exp;currentKey=old;return n});let mx=Math.max(...vals,1);
+ chart.innerHTML=months.map((k,i)=>`<div class="barcol"><i style="height:${Math.max(6,vals[i]/mx*130)}px"></i>${MONTHS[Number(k.slice(5))-1].slice(0,3)}</div>`).join("")
+}
+function showPage(page){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(page).classList.add("active");
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));window.scrollTo({top:0,behavior:"smooth"})
+}
+function toast(t){let e=document.getElementById("toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),2200)}
+function openModal(type,index=null){
+ modal={type,index};let f=document.getElementById("modalForm"),title="";
+ if(type==="salary"){title="Edit Gaji Utama";f.innerHTML=`<div class="field"><label>Gaji bulan ini</label><input class="input" id="f1" type="number" min="0" value="${d().salary||""}" placeholder="7500000"></div>`}
+ if(type==="saving"){let v=index==null?{name:"",amount:1000000,color:"green",icon:"▣"}:d().savings[index];title=index==null?"Tambah Tabungan":"Edit Tabungan";f.innerHTML=`<div class="field"><label>Nama Pos Tabungan</label><input class="input" id="f1" maxlength="50" value="${esc(v.name)}" placeholder="Contoh: Dana Darurat"></div><div class="field"><label>Nominal</label><input class="input" id="f2" type="number" min="0" value="${v.amount||""}" placeholder="1000000"></div><div class="field"><label>Warna</label><select class="input" id="f3"><option value="green">Hijau</option><option value="blue">Biru</option><option value="orange">Oranye</option><option value="purple">Ungu</option><option value="pink">Pink</option></select></div>`}
+ if(type==="installment"){let v=index==null?{name:"",total:0,paid:0}:d().installments[index];title=index==null?"Tambah Cicilan":"Edit Cicilan";f.innerHTML=`<div class="field"><label>Nama Cicilan</label><input class="input" id="f1" maxlength="50" value="${esc(v.name)}" placeholder="Contoh: Motor / HP / KPR"></div><div class="form2"><div class="field"><label>Total Cicilan</label><input class="input" id="f2" type="number" min="0" value="${v.total||""}"></div><div class="field"><label>Sudah Dibayar</label><input class="input" id="f3" type="number" min="0" value="${v.paid||""}"></div></div><div class="note">Sisa cicilan dihitung otomatis dari total dikurangi yang sudah dibayar.</div>`}
+ if(type==="expense"){let v=index==null?{name:"",amount:0,date:new Date().toLocaleDateString("id-ID")}:d().transactions[index];title=index==null?"Tambah Pengeluaran":"Edit Pengeluaran";f.innerHTML=`<div class="field"><label>Nama Pengeluaran</label><input class="input" id="f1" maxlength="50" value="${esc(v.name)}" placeholder="Contoh: Makan, bensin, belanja"></div><div class="field"><label>Nominal</label><input class="input" id="f2" type="number" min="0" value="${v.amount||""}"></div><div class="field"><label>Tanggal</label><input class="input" id="f3" type="text" value="${esc(v.date||"")}"></div>`}
+ document.getElementById("modalTitle").textContent=title;document.getElementById("modalBg").classList.add("show");setTimeout(()=>document.getElementById("f1")?.focus(),40)
+}
+function closeModal(){document.getElementById("modalBg").classList.remove("show");modal=null}
+function saveModal(){
+ if(!modal)return;let x=d(),t=modal.type,i=modal.index;
+ if(t==="salary"){x.salary=Math.max(0,Number(document.getElementById("f1").value)||0);toast("Gaji disimpan.")}
+ if(t==="saving"){let name=document.getElementById("f1").value.trim(),amount=Math.max(0,Number(document.getElementById("f2").value)||0),color=document.getElementById("f3").value;if(!name)return toast("Nama pos wajib diisi.");let old=i==null?{}:x.savings[i];let v={id:old.id||id(),name,amount,color,icon:old.icon||"▣"};i==null?x.savings.push(v):x.savings[i]=v;toast("Tabungan disimpan.")}
+ if(t==="installment"){let name=document.getElementById("f1").value.trim(),total=Math.max(0,Number(document.getElementById("f2").value)||0),paid=Math.min(total,Math.max(0,Number(document.getElementById("f3").value)||0));if(!name)return toast("Nama cicilan wajib diisi.");let old=i==null?{}:x.installments[i],v={id:old.id||id(),name,total,paid};i==null?x.installments.push(v):x.installments[i]=v;toast("Cicilan disimpan.")}
+ if(t==="expense"){let name=document.getElementById("f1").value.trim(),amount=Math.max(0,Number(document.getElementById("f2").value)||0),date=document.getElementById("f3").value.trim();if(!name)return toast("Nama pengeluaran wajib diisi.");let old=i==null?{}:x.transactions[i],v={id:old.id||id(),name,amount,date};i==null?x.transactions.push(v):x.transactions[i]=v;toast("Transaksi disimpan.")}
+ persist();closeModal();render()
+}
+function editSaving(i){openModal("saving",i)}function editInstallment(i){openModal("installment",i)}function editExpense(i){openModal("expense",i)}
+function delSaving(i){if(confirm("Hapus pos tabungan ini?")){d().savings.splice(i,1);persist();render();toast("Tabungan dihapus.")}}
+function delInstallment(i){if(confirm("Hapus cicilan ini?")){d().installments.splice(i,1);persist();render();toast("Cicilan dihapus.")}}
+function delExpense(i){if(confirm("Hapus transaksi ini?")){d().transactions.splice(i,1);persist();render();toast("Transaksi dihapus.")}}
+function resetMonth(){if(confirm("Reset semua data bulan "+label(currentKey)+"?")){db[currentKey]=blank();persist();render();toast("Bulan berhasil direset.")}}
+function newMonth(){
+ let suggestion=new Date();suggestion.setMonth(suggestion.getMonth()+1);let key=suggestion.getFullYear()+"-"+String(suggestion.getMonth()+1).padStart(2,"0");
+ let v=prompt("Masukkan bulan baru (format YYYY-MM):",key);if(v===null)return;if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(v))return alert("Format salah. Contoh 2026-10");currentKey=v;ensure(v);persist();render();toast("Bulan "+label(v)+" dibuat.")
+}
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.getElementById("monthSelect").addEventListener("change",e=>{currentKey=e.target.value;render();toast("Membuka "+label(currentKey))});
+document.getElementById("editSalary").onclick=()=>openModal("salary");document.getElementById("editSalary2").onclick=()=>openModal("salary");
+document.getElementById("addSaving").onclick=()=>openModal("saving");document.getElementById("addInstallment").onclick=()=>openModal("installment");document.getElementById("addExpense").onclick=()=>openModal("expense");document.getElementById("addIncome").onclick=()=>openModal("salary");
+document.getElementById("newMonth").onclick=newMonth;document.getElementById("newMonth2").onclick=newMonth;document.getElementById("resetAll").onclick=resetMonth;document.getElementById("resetSettings").onclick=resetMonth;
+document.getElementById("cancelModal").onclick=closeModal;document.getElementById("saveModal").onclick=saveModal;
+document.getElementById("modalBg").onclick=e=>{if(e.target.id==="modalBg")closeModal()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();if(e.key==="Enter"&&document.getElementById("modalBg").classList.contains("show")){e.preventDefault();saveModal()}});
+document.getElementById("autosaveSwitch").onclick=function(){autosave=!autosave;this.classList.toggle("on",autosave);if(autosave)persist();toast(autosave?"Autosave aktif.":"Autosave dimatikan.")};
+window.addEventListener("beforeunload",persist);
+ensure(currentKey);render();
+</script>
+</body>
+</html>
